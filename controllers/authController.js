@@ -1,5 +1,5 @@
 dotenv.config()
-import user from "../models/users.js"
+import User from "../models/users.js"
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs"
 import dotenv from "dotenv";
@@ -33,11 +33,17 @@ export const login = async (req, res) => {
     // fetching the details given by the user
     const { username, password } = req.body;
     // finding the username in the database
-    const Oneuser = await user.findOne({ username })
+    const Oneuser = await User.findOne({ username })
     const solvedPassword = await bcrypt.compare(password, Oneuser.password)
     if (!Oneuser || !solvedPassword) return res.status(401).json({ message: `Invalid Username or password` });
+    // added a new type of payload
+    const payload = {
+        user: {
+            id: Oneuser._id
+        }
+    };
     // creating a jwt token 
-    const token = jwt.sign({ password: user.password }, process.env.JWT_SECRET);
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.status(200).json(
         {
             message: "Access Granted",

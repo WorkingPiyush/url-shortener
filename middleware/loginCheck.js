@@ -9,7 +9,8 @@ export const loginCheck = async (req, res, next) => {
     const token = authHeader.split(' ')[1]
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.User = decoded.id;
+        console.log(decoded)
+       req.user = decoded.user;
         next();
     } catch (error) {
         return res.status(401).json({ message: `Invald Token!!`, error: error.message })

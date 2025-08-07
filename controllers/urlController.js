@@ -7,9 +7,9 @@ export const shortUrl = async (req, res) => {
     try {
         // accepting the url
         const { origonalUrl } = req.body;
-        // genrating the shortid 
+        const userId = req.user.id;
         const shortUrl = nanoid(8);
-        // validating the url 
+        // validating the url
         const urlValidation = new RegExp(/^(http|https):\/\/[^ "]+$/);
         if (!urlValidation.test(origonalUrl)) {
             return res.status(400).json({ message: "Invalid URL" })
@@ -26,7 +26,8 @@ export const shortUrl = async (req, res) => {
         const newurl = await Url.create({
             origonalUrl,
             shortUrl,
-            expirationDate
+            expirationDate,
+            User: userId
         })
         return res.status(200).json({ message: "URL Genrated ", url: newurl })
     } catch (error) {
@@ -52,5 +53,19 @@ export const redirectUrl = async (req, res) => {
     } catch (error) {
         console.error("Redirect error:", error);
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
+}
+// getting all the created url by a specific user
+export const getmyUrl = async (req, res) => {
+    try {
+        let userId = req.user.id
+        const fetchUrls = await Url.find({ User: userId }).sort({ createdAt: -1 });
+        if (fetchUrls.length == 0) {
+            return res.status(202).json({ message: "No Genrated URLs Found !" });
+        }
+        res.status(200).json(fetchUrls);
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "Server Error", error });
     }
 }

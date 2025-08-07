@@ -23,6 +23,8 @@ app.use('/api/', authRoutes)
 // url working entry-point
 import urlRoutes from './routes/urlRoutes.js'
 app.use('/api/', urlRoutes)
+// making the url redirecting safe and secure.
+app.use('/r/', urlRoutes)
 
 
 
