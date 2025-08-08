@@ -69,3 +69,28 @@ export const getmyUrl = async (req, res) => {
         res.status(500).json({ message: "Server Error", error });
     }
 }
+// getting the details of short url
+export const getUrlAnalytics = async (req, res) => {
+    try {
+        const { shortUrl } = req.params;
+        const url = await Url.findOne({ shortUrl })
+        if (url) {
+            return res.status(200).json(url)
+        }
+        else return res.status(404).json({ message: "URL not found" })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "Server Error" })
+    }
+}
+// delete the URL
+export const deleteUrl = async (req, res) => {
+    try {
+        const { shortUrl } = req.params;
+        await Url.findOneAndDelete({ shortUrl });
+        res.json('Your Selected URL is deleted')
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: 'Server Error' });
+    }
+}
