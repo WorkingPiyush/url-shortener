@@ -19,7 +19,9 @@ const UrlSchema = mongoose.Schema({
         default: Date.now,
     },
     expirationDate: {
-        type: Date
+        type: Date,
+        required: true,
+        index: { expireAfterSeconds: 0 } // this will delete the url after the expiration time passes.
     },
     createdAt: {
         type: Date,

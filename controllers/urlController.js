@@ -2,6 +2,7 @@ dotenv.config()
 import Url from "../models/url.js";
 import dotenv from "dotenv";
 import { nanoid } from 'nanoid'
+import QRCode from 'qrcode'
 // shorting URL func..
 export const shortUrl = async (req, res) => {
     try {
@@ -42,14 +43,26 @@ export const redirectUrl = async (req, res) => {
         const { shortUrl } = req.params;
         // checking in the DB
         const url = await Url.findOne({ shortUrl });
-        if (!url || (url.expirationDate && url.expirationDate < new Date())) {
-            res.status(400).json("Url expired or not found")
+        if (!url) {
+            res.status(400).json("Url not found")
             return
+        }
+        if (url.expirationDate < new Date()) {
+            console.log("Url expired")
+            return res.status(403).json({ error: "Url expired" });
         }
         url.clicks++;
         // saving the clicks in the DB
         await url.save();
-        res.redirect(url.origonalUrl)
+        const realUrl = url.origonalUrl
+        // const qrCodeImg = await QRCode.toDataURL(realUrl) // made this qr code will use this through frontend | till then its will be a comment
+        res.redirect(realUrl)
+        // return res.status(200).json({
+        //     message: "Url Genrated",
+        //     Url: realUrl,
+        //     qrCodeImg
+        // })
+
     } catch (error) {
         console.error("Redirect error:", error);
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
