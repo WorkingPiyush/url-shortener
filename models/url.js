@@ -14,10 +14,6 @@ const UrlSchema = mongoose.Schema({
         required: true,
         default: 0,
     },
-    date: {
-        type: String,
-        default: Date.now,
-    },
     expirationDate: {
         type: Date,
         required: true,
@@ -32,6 +28,9 @@ const UrlSchema = mongoose.Schema({
         ref: 'User',
         required: true
     },
+    hashPassword: {
+        type: String,
+    }
 }, { timestamps: true });
 
 export default mongoose.model('Url', UrlSchema);

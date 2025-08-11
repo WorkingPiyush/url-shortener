@@ -2,12 +2,18 @@ dotenv.config()
 import Url from "../models/url.js";
 import dotenv from "dotenv";
 import { nanoid } from 'nanoid'
+import bcrypt from 'bcryptjs';
 import QRCode from 'qrcode'
 // shorting URL func..
 export const shortUrl = async (req, res) => {
     try {
-        // accepting the url
-        const { origonalUrl } = req.body;
+        // accepting the url if the password
+        const { origonalUrl, password } = req.body;
+        let hashPassword = null;
+        // if password is present
+        if (password) {
+            hashPassword = await bcrypt.hash(password, 10);
+        }
         const userId = req.user.id;
         const shortUrl = nanoid(8);
         // validating the url
@@ -28,9 +34,10 @@ export const shortUrl = async (req, res) => {
             origonalUrl,
             shortUrl,
             expirationDate,
+            hashPassword,
             User: userId
         })
-        return res.status(200).json({ message: "URL Genrated ", url: newurl })
+        return res.status(200).json({ message: "URL Genrated ", url: `${process.env.BASE}/${shortUrl}` })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: "Server", error })
@@ -38,18 +45,30 @@ export const shortUrl = async (req, res) => {
 }
 // redirecting the short url
 export const redirectUrl = async (req, res) => {
-    // getting the short url kind of id
+    // getting the short url kind of id and if the password provided.
     try {
         const { shortUrl } = req.params;
+        const { password } = req.body;
         // checking in the DB
         const url = await Url.findOne({ shortUrl });
         if (!url) {
-            res.status(400).json("Url not found")
-            return
+            return res.status(404).json("Url not found")
         }
         if (url.expirationDate < new Date()) {
             console.log("Url expired")
             return res.status(403).json({ error: "Url expired" });
+        }
+        // if the password present in the db
+        if (url.hashPassword) {
+            // then please provide the password in the body
+            if (!password) {
+                return res.status(401).json({ message: "Password required" });
+            }
+            // compairing the giving password and the db stored password
+            const isMatch = await bcrypt.compare(password, url.hashPassword)
+            if (!isMatch) {
+                return res.status(401).json({ message: "Invalid Password" });
+            }
         }
         url.clicks++;
         // saving the clicks in the DB
