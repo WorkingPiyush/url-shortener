@@ -17,7 +17,7 @@ const limitter = rateLimit({
 // middleware used
 app.use(express.json())
 app.use(cookieParser())
-app.use('/api', limitter)
+app.use('/api', limitter) //rate-limiting middleware
 
 
 // connected DB...
