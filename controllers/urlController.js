@@ -1,30 +1,30 @@
-dotenv.config()
 import Url from "../models/url.js";
 import dotenv from "dotenv";
 import { nanoid } from 'nanoid'
 import bcrypt from 'bcryptjs';
 import QRCode from 'qrcode'
+dotenv.config()
 // shorting URL func..
 export const shortUrl = async (req, res) => {
     try {
         // accepting the url if the password
         const { origonalUrl, password } = req.body;
+        const userId = req.user.id;
         let hashPassword = null;
         // if password is present
         if (password) {
             hashPassword = await bcrypt.hash(password, 10);
         }
-        const userId = req.user.id;
         const shortUrl = nanoid(8);
         // validating the url
-        const urlValidation = new RegExp(/^(http|https):\/\/[^ "]+$/);
-        if (!urlValidation.test(origonalUrl)) {
+        const urlValidation = new URL(origonalUrl)
+        if (!urlValidation) {
             return res.status(400).json({ message: "Invalid URL" })
         }
         // checking the DB for the existing URL
-        const existingUrl = await Url.findOne({ origonalUrl });
+        const existingUrl = await Url.findOne({ origonalUrl, User: userId });
         if (existingUrl) {
-            return res.status(200).json({ message: "URL already exists", url: existingUrl });
+            return res.status(409).json({ message: "URL already exists", url: existingUrl });
         }
         const expirationDate = new Date();
         // adding a expiry time after 7 days from now
@@ -37,7 +37,7 @@ export const shortUrl = async (req, res) => {
             hashPassword,
             User: userId
         })
-        return res.status(200).json({ message: "URL Genrated ", url: `${process.env.BASE}/${shortUrl}` })
+        return res.status(201).json({ message: "URL Genrated ", url: `${process.env.BASE}/${shortUrl}` })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: "Server", error })
@@ -48,7 +48,7 @@ export const redirectUrl = async (req, res) => {
     // getting the short url kind of id and if the password provided.
     try {
         const { shortUrl } = req.params;
-        const { password } = req.body;
+        // const { password } = req.body;
         // checking in the DB
         const url = await Url.findOne({ shortUrl });
         if (!url) {
