@@ -3,7 +3,12 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import express from "express";
 import rateLimit from "express-rate-limit";
+import path from "path";
 import { connectDB } from "./connectDB.js";
+// added for accessing FE files
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const PORT = 7001;
 const app = express();
 
@@ -17,7 +22,6 @@ const limitter = rateLimit({
 // middleware used
 app.use(express.json())
 app.use(cookieParser())
-app.use('/api', limitter) //rate-limiting middleware
 
 
 // connected DB...
@@ -25,12 +29,16 @@ connectDB(process.env.MONGO_DB_URI)
 
 // Home Page Route
 app.get('/', (req, res) => {
-    res.send("Home Page")
+    res.sendFile(path.join(__dirname, 'public', 'homePage.html'))
 })
 
 // authentication route
 import authRoutes from './routes/authRoutes.js';
 app.use('/api/', authRoutes)
+
+
+
+app.use('/api', limitter) //rate-limiting middleware
 // url working entry-point
 import urlRoutes from './routes/urlRoutes.js'
 app.use('/api/', urlRoutes)
