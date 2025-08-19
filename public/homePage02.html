@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -104,7 +105,7 @@
             background: white;
             padding: 1.5rem;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .feature-card h3 {
@@ -122,13 +123,13 @@
         }
     </style>
 </head>
+
 <body>
 
     <header>
         <h1>short-LS</h1>
         <div class="auth-buttons">
-            <a href="signup.html">Sign Up</a>
-            <a href="login.html">Log In</a>
+            <a href="/">Log Out</a>
         </div>
     </header>
 
@@ -137,8 +138,8 @@
         <p>Turn your long, messy URLs into short and shareable links in seconds.</p>
 
         <div class="url-form">
-            <input type="text" placeholder="Enter your long URL here">
-            <button>Shorten</button>
+            <input type="text" id="urlPlace" placeholder="Enter your long URL here">
+            <button id="btn-submit">Shorten</button>
         </div>
 
         <div class="features">
@@ -162,4 +163,35 @@
     </footer>
 
 </body>
+<script>
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href('/api/login');
+    }
+    fetch("/short", {
+        headers: { Authorization: "Bearer " + token }
+    }).then(res => res.json()).then(data => {
+        console.log(data.username)
+    });
+
+    document.getElementById('btn-submit').addEventListener("click", async function (e) {
+
+        const urlData = {
+            origonalUrl: e.urlPlace.value,
+        }
+
+        const res = await fetch('/api/short', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(urlData),
+        })
+
+        const data = await res.json();
+
+        if (data.success) {
+            alert(data.message);
+        }
+    });
+</script>
+
 </html>

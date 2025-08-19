@@ -6,6 +6,7 @@ dotenv.config()
 
 export const register = async (req, res) => {
     const { username, email, password } = req.body;
+    console.log("User Data", username, email, password)
     // checking if the mail is already exist or not..
     let userCheck = await User.findOne({ email: req.body.email })
     if (userCheck) {
@@ -21,7 +22,7 @@ export const register = async (req, res) => {
                 password: hashPassword
             })
             // sending the response
-            res.status(201).json({ message: "User Created ", UserId: userCreate._id })
+            res.status(201).json({ success: true, message: "User Created ", UserId: userCreate._id })
         } catch (error) {
             console.log(error.message)
             res.status(500).json({ error: `User already exist or server has some personal problem with you.` });
@@ -48,6 +49,7 @@ export const login = async (req, res) => {
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json(
             {
+                success: true,
                 message: "Access Granted",
                 token
             }
