@@ -80,11 +80,11 @@
       e.preventDefault();
 
       const formData = {
-        username: e.target.username.value,
-        email: e.target.email.value,
-        password: e.target.password.value,
+        username: e.target.username.value, // username provide by the user
+        email: e.target.email.value, // email provide by the user
+        password: e.target.password.value, // password provide by the user
       }
-
+      // fetching /api/register API
       const res = await fetch('/api/register', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -94,10 +94,10 @@
       const data = await res.json();
 
       if (data.success) {
-        alert(data.message);
-        window.location.href = "/";
+        alert(data.message); // after completion of registration 
+        window.location.href = "/login"; // this will redirect the user to the login page
       } else {
-        alert("Registration failed: " + data.message);
+        alert("Registration failed: " + data.message); // else this will run and tell us the mahool of the api in the console
       }
     });
   </script>

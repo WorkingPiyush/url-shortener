@@ -129,6 +129,7 @@
     <header>
         <h1>short-LS</h1>
         <div class="auth-buttons">
+            <!-- soon this route to the the logout route -->
             <a href="/">Log Out</a>
         </div>
     </header>
@@ -141,7 +142,18 @@
             <input type="text" id="urlPlace" placeholder="Enter your long URL here">
             <button id="btn-submit">Shorten</button>
         </div>
+        <div id="result-box"
+            style="display:none; margin-top: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 8px;">
+            <p><strong>Short URL:</strong> <a id="shortUrl" href="#" target="_blank"></a></p>
+            <div style="margin-top:10px;">
+                <strong>QR Code:</strong>
+                <br>
+                <img id="qrImage" src="" alt="QR Code"
+                    style="margin-top:10px; max-width:150px; border:1px solid #ddd; padding:5px; border-radius:6px;">
+            </div>
+        </div>
 
+        </div>
         <div class="features">
             <div class="feature-card">
                 <h3>Fast & Easy</h3>
@@ -164,32 +176,49 @@
 
 </body>
 <script>
+    // checking is there any token in the local storage
     const token = localStorage.getItem('token');
     if (!token) {
-        window.location.href('/api/login');
+        window.location.href = '/login';
     }
-    fetch("/short", {
-        headers: { Authorization: "Bearer " + token }
-    }).then(res => res.json()).then(data => {
-        console.log(data.username)
-    });
-
     document.getElementById('btn-submit').addEventListener("click", async function (e) {
 
+        const urlPlace = document.getElementById('urlPlace');
         const urlData = {
-            origonalUrl: e.urlPlace.value,
+            origonalUrl: urlPlace.value, //url value
         }
 
+        // fetching /short api 
         const res = await fetch('/api/short', {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token,
+            },
             body: JSON.stringify(urlData),
         })
 
-        const data = await res.json();
 
+        const data = await res.json();
         if (data.success) {
-            alert(data.message);
+            let shortUrl = `http://localhost:7001/api/r/${data.url.shortUrl}`
+            console.log(shortUrl); //loging shorturl in the console
+            // console.log(data.qrCodeImg); // qrcode image url
+            const resultBox = document.getElementById("result-box");
+            const shortUrlElement = document.getElementById("shortUrl");
+            const qrImage = document.getElementById("qrImage");
+            shortUrlElement.href = shortUrl; // adding shortUrl link in the <a>
+            shortUrlElement.textContent = shortUrl; // same as above
+            let qrSrc = await data.qrCodeImg; // loading the whole url of the image
+            qrImage.src = qrSrc; // setting the qr image url with empty image url
+            resultBox.style.display = "block"
+        } else {
+            console.log("Error: " + data.message);
+            let errUrl = 'Error occuered while creating url.Please try again !!'
+            const resultBox = document.getElementById("result-box");
+            const shortUrlElement = document.getElementById("shortUrl");
+            shortUrlElement.textContent = errUrl;
+            resultBox.style.display = "block"
         }
     });
 </script>

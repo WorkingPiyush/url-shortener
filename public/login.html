@@ -77,24 +77,24 @@
             e.preventDefault();
 
             const formData = {
-                username: e.target.username.value,
-                password: e.target.password.value,
+                username: e.target.username.value, // username provide by the user
+                password: e.target.password.value, // password provide by the user
             }
-
+            // fetching /api/login API
             const res = await fetch('/api/login', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             })
-
+            // converting into a JSON
             const data = await res.json();
 
             if (data.success) {
-                localStorage.setItem('token', data.token);
-                alert(data.message);
-                window.location.href = "/home/short-Url";
+                localStorage.setItem('token', data.token); //setting the JWT token in the local storage
+                alert(data.message); // 'access granted' alert will poped on the successfully login
+                window.location.href = "/home"; // back to home but where you are loged in
             } else {
-                alert(data.message);
+                alert(data.message); // else at the end this will work if the above mentioned things not work if any error comes
             }
         });
     </script>

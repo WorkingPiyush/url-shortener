@@ -1,28 +1,27 @@
 import Url from "../models/url.js";
 import dotenv from "dotenv";
 import { nanoid } from 'nanoid'
-import bcrypt from 'bcryptjs';
 import QRCode from 'qrcode'
 dotenv.config()
 // shorting URL func..
 export const shortUrl = async (req, res) => {
     try {
         // accepting the url if the password
-        const { origonalUrl, password } = req.body;
-        const userId = req.user.id;
-        let hashPassword = null;
-        // if password is present
-        if (password) {
-            hashPassword = await bcrypt.hash(password, 10);
+        const { origonalUrl } = req.body;
+        if (!origonalUrl) {
+            return res.status(400).json({ success: false, message: "Original URL required" });
         }
+        // getting user ref
+        const userID = req.user.id
         const shortUrl = nanoid(8);
         // validating the url
         const urlValidation = new URL(origonalUrl)
+        // url Validation
         if (!urlValidation) {
             return res.status(400).json({ message: "Invalid URL" })
         }
         // checking the DB for the existing URL
-        const existingUrl = await Url.findOne({ origonalUrl, User: userId });
+        const existingUrl = await Url.findOne({ origonalUrl, User: userID });
         if (existingUrl) {
             return res.status(409).json({ message: "URL already exists", url: existingUrl });
         }
@@ -34,20 +33,21 @@ export const shortUrl = async (req, res) => {
             origonalUrl,
             shortUrl,
             expirationDate,
-            hashPassword,
-            User: userId
+            User: userID
         })
-        return res.status(201).json({ message: "URL Genrated ", url: `${process.env.BASE}/${shortUrl}` })
+        // giving a a qr code response of short url
+        const qrCodeImg = await QRCode.toDataURL(newurl.origonalUrl)
+        return res.status(201).json({ success: true, url: newurl, qrCodeImg })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ message: "Server", error })
+        return res.status(500).json({ success: false, message: "Server Error", error })
     }
 }
 // redirecting the short url
 export const redirectUrl = async (req, res) => {
     // getting the short url kind of id and if the password provided.
     try {
-        const { shortUrl } = req.params;
+        const shortUrl = req.params.shortUrl;
         // const { password } = req.body;
         // checking in the DB
         const url = await Url.findOne({ shortUrl });
@@ -58,24 +58,12 @@ export const redirectUrl = async (req, res) => {
             console.log("Url expired")
             return res.status(403).json({ error: "Url expired" });
         }
-        // if the password present in the db
-        if (url.hashPassword) {
-            // then please provide the password in the body
-            if (!password) {
-                return res.status(401).json({ message: "Password required" });
-            }
-            // compairing the giving password and the db stored password
-            const isMatch = await bcrypt.compare(password, url.hashPassword)
-            if (!isMatch) {
-                return res.status(401).json({ message: "Invalid Password" });
-            }
-        }
         url.clicks++;
         // saving the clicks in the DB
         await url.save();
-        const realUrl = url.origonalUrl
-        // const qrCodeImg = await QRCode.toDataURL(realUrl) // made this qr code will use this through frontend | till then its will be a comment
-        res.redirect(realUrl)
+        return res.redirect(url.origonalUrl)
+        // const qrCodeImg = await QRCode.toDataURL(url.origonalUrl) 
+
         // return res.status(200).json({
         //     message: "Url Genrated",
         //     Url: realUrl,
