@@ -130,7 +130,7 @@
         <h1>short-LS</h1>
         <div class="auth-buttons">
             <!-- soon this route to the the logout route -->
-            <a href="/">Log Out</a>
+            <a href="/logout">Log Out</a>
         </div>
     </header>
 
@@ -214,10 +214,8 @@
             resultBox.style.display = "block"
         } else {
             console.log("Error: " + data.message);
-            let errUrl = 'Error occuered while creating url.Please try again !!'
             const resultBox = document.getElementById("result-box");
-            const shortUrlElement = document.getElementById("shortUrl");
-            shortUrlElement.textContent = errUrl;
+            resultBox.textContent = data.message;
             resultBox.style.display = "block"
         }
     });

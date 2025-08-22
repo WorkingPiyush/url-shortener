@@ -1,7 +1,9 @@
 import dotenv from "dotenv";
 import User from "../models/users.js"
+import blackList from "../models/de-activatedSession.js"
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs"
+
 dotenv.config()
 
 export const register = async (req, res) => {
@@ -57,5 +59,31 @@ export const login = async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: `Server Error`, error });
+    }
+}
+// to be checked this route some problem is here regarding DB
+export const logout = async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) return res.status(401).json({ message: "Token is missing !!" });
+        const token = authHeader.split(' ')[1]
+        console.log(token)
+        const decoded = jwt.decode(token);
+        console.log(decoded)
+        if (!decoded || !decoded.exp) {
+            return res.status(400).json({ message: "Invalid token" });
+        }
+        const jwtExpiry = new Date(decoded.exp * 1000)
+        const blacklisted = await blackList.create({
+            token,
+            expiry: jwtExpiry
+
+        })
+        res.status(200).json({ message: 'You are logged out!' });
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            message: 'Internal Server Error',
+        });
     }
 }

@@ -9,7 +9,7 @@ export const shortUrl = async (req, res) => {
         // accepting the url if the password
         const { origonalUrl } = req.body;
         if (!origonalUrl) {
-            return res.status(400).json({ success: false, message: "Original URL required" });
+            return res.status(400).json({ success: false, message: "Please provide the URL" });
         }
         // getting user ref
         const userID = req.user.id
@@ -62,20 +62,13 @@ export const redirectUrl = async (req, res) => {
         // saving the clicks in the DB
         await url.save();
         return res.redirect(url.origonalUrl)
-        // const qrCodeImg = await QRCode.toDataURL(url.origonalUrl) 
-
-        // return res.status(200).json({
-        //     message: "Url Genrated",
-        //     Url: realUrl,
-        //     qrCodeImg
-        // })
 
     } catch (error) {
         console.error("Redirect error:", error);
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 }
-// getting all the created url by a specific user
+// getting all the created url by the user
 export const getmyUrl = async (req, res) => {
     try {
         let userId = req.user.id

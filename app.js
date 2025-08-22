@@ -51,9 +51,10 @@ app.use('/api/', authRoutes)
 // adding frontfaces to the routes
 app.use("/register", express.static(path.join(__dirname, 'public', 'register.html')))
 app.use("/login", express.static(path.join(__dirname, 'public', 'login.html')))
+app.use("/logout", express.static(path.join(__dirname, 'public', 'logout.html')))
 
 //rate-limiting middleware
-app.use('/api', limitter) 
+app.use('/api', limitter)
 
 // url working entry-point
 import urlRoutes from './routes/urlRoutes.js'
