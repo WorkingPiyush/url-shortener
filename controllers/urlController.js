@@ -72,7 +72,7 @@ export const redirectUrl = async (req, res) => {
 export const getmyUrl = async (req, res) => {
     try {
         let userId = req.user.id
-        const fetchUrls = await Url.find({ User: userId }).sort({ createdAt: -1 });
+        const fetchUrls = await Ur+l.find({ User: userId }).sort({ createdAt: -1 });
         if (fetchUrls.length == 0) {
             return res.status(202).json({ message: "No Genrated URLs Found !" });
         }

@@ -121,6 +121,40 @@
             font-size: 0.9rem;
             color: #777;
         }
+
+        #myUrlsBtn {
+            background-color: white;
+            color: #2563eb;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid #2563eb;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #logoutBtn {
+            background-color: rgb(255, 9, 9);
+            color: #2563eb;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid #2563eb;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #myUrlsBtn:hover {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        #logoutBtn:hover {
+            background-color: #2563eb;
+            color: white;
+        }
     </style>
 </head>
 
@@ -129,8 +163,8 @@
     <header>
         <h1>short-LS</h1>
         <div class="auth-buttons">
-            <!-- soon this route to the the logout route -->
-            <a href="/logout">Log Out</a>
+            <button id="myUrlsBtn">My URLs</button>
+            <a href="/logout" id="logoutBtn">Log Out</a>
         </div>
     </header>
 

@@ -63,23 +63,27 @@ export const login = async (req, res) => {
 }
 // to be checked this route some problem is here regarding DB
 export const logout = async (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ message: "Token is missing !!" });
     try {
-        const authHeader = req.headers.authorization;
-        if (!authHeader) return res.status(401).json({ message: "Token is missing !!" });
         const token = authHeader.split(' ')[1]
-        console.log(token)
+        // console.log(token)
         const decoded = jwt.decode(token);
         console.log(decoded)
         if (!decoded || !decoded.exp) {
             return res.status(400).json({ message: "Invalid token" });
         }
+        // settting an extra layer of expiry time after adding expiry in the jwt
         const jwtExpiry = new Date(decoded.exp * 1000)
+        // sending data to the database and saving also
         const blacklisted = await blackList.create({
             token,
             expiry: jwtExpiry
 
         })
-        res.status(200).json({ message: 'You are logged out!' });
+        // console.log(blacklisted)
+        // sending the response to the client side
+        res.status(200).json({ success: true, message: 'You are logged out!' });
     } catch (error) {
         res.status(500).json({
             status: 'error',
