@@ -71,13 +71,16 @@ export const redirectUrl = async (req, res) => {
 // getting all the created url by the user
 export const getmyUrl = async (req, res) => {
     try {
-        let userId = req.user.id
-        const fetchUrls = await Ur+l.find({ User: userId }).sort({ createdAt: -1 });
+        let userId = req.user.id // getting user's refrence
+        const fetchUrls = await Url.find({ User: userId }).sort({ createdAt: -1 }); // finding the all urls which this requested user has created and in a sort order
         if (fetchUrls.length == 0) {
+            // if the length of url is 0 means if the has not created any thing this work
             return res.status(202).json({ message: "No Genrated URLs Found !" });
         }
+        // then it will respond
         res.status(200).json(fetchUrls);
     } catch (error) {
+        // if there is any error comes this blk will help us to check the code
         console.log(error)
         res.status(500).json({ message: "Server Error", error });
     }

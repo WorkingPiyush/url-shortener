@@ -54,13 +54,14 @@ app.use("/login", express.static(path.join(__dirname, 'public', 'login.html')))
 app.use("/logout", express.static(path.join(__dirname, 'public', 'logout.html')))
 
 //rate-limiting middleware
-app.use('/api', limitter)
+// app.use('/api', limitter)
 
 // url working entry-point
 import urlRoutes from './routes/urlRoutes.js'
 app.use('/api/', urlRoutes)
 // adding frontfaces to the routes
 app.use("/home", express.static(path.join(__dirname, 'public', 'homePage02.html')))
+app.use("/myURLs", express.static(path.join(__dirname, 'public', 'getURLLists.html')))
 
 
 
