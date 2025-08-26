@@ -91,7 +91,7 @@ export const getUrlAnalytics = async (req, res) => {
         const { shortUrl } = req.params;
         const url = await Url.findOne({ shortUrl })
         if (url) {
-            return res.status(200).json(url)
+            return res.status(200).json({ success: true, url })
         }
         else return res.status(404).json({ message: "URL not found" })
     } catch (error) {

@@ -8,7 +8,7 @@ import { loginCheck } from "../middleware/loginCheck.js";
 router.post('/short', loginCheck, shortUrl)
 router.get('/getmy-Url', loginCheck, getmyUrl)
 router.get('/r/:shortUrl', redirectUrl)
-router.get('/details/:shortUrl', loginCheck, getUrlAnalytics)
+router.get('/details/:shortUrl', getUrlAnalytics)
 router.delete('/delete/:shortUrl', deleteUrl)
 
 export default router;

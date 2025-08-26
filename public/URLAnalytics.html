@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>URL Details - short-LS</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            color: #333;
+        }
+
+        header {
+            background: #4f46e5;
+            color: #fff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #222;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        #orgURL:link {
+            color: blue;
+        }
+
+        th {
+            width: 30%;
+            color: #555;
+            font-weight: normal;
+        }
+
+        tr:hover {
+            background: #f7f7f7;
+        }
+
+        .short-url {
+            color: #007bff;
+            font-weight: bold;
+            /* text-decoration: none; */
+        }
+
+        .auth-buttons a {
+            text-decoration: none;
+            color: white;
+            background: #2563eb;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            margin-left: 0.5rem;
+            transition: background 0.3s;
+        }
+
+        .auth-buttons a:hover {
+            background: #1d4ed8;
+        }
+
+        #logoutBtn {
+            background-color: rgb(255, 9, 9);
+            color: #2563eb;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid #2563eb;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #f1f1f1;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>short-LS</h1>
+        <div class="auth-buttons">
+            <a href="/home">Home</a>
+            <a id="logoutBtn" href="/logout">Log Out</a>
+        </div>
+    </header>
+
+    <main>
+        <h2>URL Details</h2>
+        <div class="card">
+            <table>
+                <tr>
+                    <th>Original URL</th>
+                    <td><a href="https://x.com/home" id="orgURL" target="_blank">https://x.com/home</a></td>
+                </tr>
+                <tr>
+                    <th>Short URL</th>
+                    <td><a href=/api/r/ id="shortURL" class="short-url" target="_blank">GMwq97fr</a></td>
+                </tr>
+                <tr>
+                    <th>Click Count</th>
+                    <td id="clickCount">1</td>
+                </tr>
+                <tr>
+                    <th>Expiration Date</th>
+                    <td id="expTime">2025-08-27 16:25:21</td>
+                </tr>
+                <tr>
+                    <th>Created on</th>
+                    <td id="createdTime">2025-08-20 16:25:21</td>
+                </tr>
+                <tr>
+                    <th>Last Update</th>
+                    <td id="updatedTime">2025-08-25 19:23:42</td>
+                </tr>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 Linkly. All rights reserved.
+    </footer>
+
+</body>
+<script>
+    async function loadDetails() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            res.status(404).json({ message: "please login first !!" })
+            window.location.href = "/login";
+        }
+        const fullUrl = window.location.pathname.split("/");
+        const shortUrl = fullUrl[fullUrl.length - 1]
+        // console.log(shortUrl)
+        let origonalUrl = document.getElementById("orgURL")
+        let shortURL = document.getElementById("shortURL")
+        let clickCount = document.getElementById("clickCount")
+        let expiryTime = document.getElementById("expTime")
+        let createdTime = document.getElementById("createdTime")
+        let updatedTime = document.getElementById("updatedTime")
+        try {
+            const res = await fetch(`/api/details/${shortUrl}`, {
+                method: "GET",
+                headers: { "Authorization": "Bearer " + token, }
+            })
+            const data = await res.json();
+            if (data.success) {
+                console.log(data.url)
+                let url = `http://localhost:7001/api/r/${data.url.shortUrl}`
+                console.log(url)
+                origonalUrl.innerHTML = `${data.url.origonalUrl}`
+                shortURL.innerHTML = `http://localhost:7001/api/${data.url.shortUrl}`
+                shortURL.href = url
+                clickCount.innerHTML = `${data.url.clicks}`
+                expiryTime.innerHTML = `${new Date(data.url.expirationDate).toLocaleString()}`
+                createdTime.innerHTML = `${new Date(data.url.createdAt).toLocaleString()}`
+                updatedTime.innerHTML = `${new Date(data.url.updatedAt).toLocaleString()}`
+            } else {
+                console.log(Error)
+            }
+        } catch (error) {
+
+        }
+    }
+    loadDetails();
+</script>
+
+</html>

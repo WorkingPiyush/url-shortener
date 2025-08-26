@@ -137,6 +137,18 @@
       font-style: italic;
     }
 
+    #logoutBtn {
+      background-color: rgb(255, 9, 9);
+      color: #2563eb;
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: 1px solid #2563eb;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
     footer {
       margin-top: 3rem;
       padding: 1rem;
@@ -144,6 +156,10 @@
       text-align: center;
       font-size: 0.9rem;
       color: #777;
+    }
+
+    #shortDesc:hover {
+      cursor: pointer
     }
   </style>
 </head>
@@ -153,8 +169,8 @@
   <header>
     <h1>short-LS</h1>
     <div class="auth-buttons">
-      <a href="/">Home</a>
-      <a href="/logout">Log Out</a>
+      <a href="/home">Home</a>
+      <a id="logoutBtn" href="/logout">Log Out</a>
     </div>
   </header>
 
@@ -198,7 +214,7 @@
             `<div class="card-content">
              <div class="label">Original:</div>
              <div class="value"><a href="${element.origonalUrl}" target="_blank">${element.origonalUrl}</a></div>
-             <div class="label">Short:</div>
+             <div class="label"><a id="shortDesc" href="/URLDetails/${element.shortUrl}">Short</a>:</div>
              <div class="value"><a href="/api/r/${element.shortUrl}" target="_blank">http://localhost:7001/${element.shortUrl}</a></div>
              <div class="label">Clicks:</div>
              <div class="value">${element.clicks}</div>

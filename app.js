@@ -62,6 +62,7 @@ app.use('/api/', urlRoutes)
 // adding frontfaces to the routes
 app.use("/home", express.static(path.join(__dirname, 'public', 'homePage02.html')))
 app.use("/myURLs", express.static(path.join(__dirname, 'public', 'getURLLists.html')))
+app.use("/URLDetails/:shortUrl", express.static(path.join(__dirname, 'public', 'URLAnalytics.html')))
 
 
 
