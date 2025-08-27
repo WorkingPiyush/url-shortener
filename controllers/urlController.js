@@ -104,7 +104,7 @@ export const deleteUrl = async (req, res) => {
     try {
         const { shortUrl } = req.params;
         await Url.findOneAndDelete({ shortUrl });
-        res.json('Your Selected URL is deleted')
+        res.json({ success: true, message: 'Your Selected URL is deleted' })
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: 'Server Error' });

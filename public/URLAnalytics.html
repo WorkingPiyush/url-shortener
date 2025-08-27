@@ -106,6 +106,44 @@
             transition: all 0.3s ease;
         }
 
+        .execution-btn {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* General button styling */
+        .execution-btn button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #fff;
+        }
+
+        .execution-btn .extendBtn {
+            background-color: #4caf50;
+        }
+
+        .execution-btn .extendBtn:hover {
+            background-color: #43a047;
+            transform: scale(1.05);
+        }
+
+        .execution-btn .deleteBtn {
+            background-color: #e53935;
+        }
+
+        .execution-btn .deleteBtn:hover {
+            background-color: #d32f2f;
+            transform: scale(1.05);
+        }
+
         footer {
             text-align: center;
             padding: 20px;
@@ -155,6 +193,10 @@
                     <td id="updatedTime">2025-08-25 19:23:42</td>
                 </tr>
             </table>
+            <div class="execution-btn">
+                <button class="extendBtn"><a>Extend</a></button>
+                <button class="deleteBtn" id="deleteBtn"><a>Delete</a></button>
+            </div>
         </div>
     </main>
 
@@ -171,6 +213,7 @@
             window.location.href = "/login";
         }
         const fullUrl = window.location.pathname.split("/");
+        // getting the shortUrl
         const shortUrl = fullUrl[fullUrl.length - 1]
         // console.log(shortUrl)
         let origonalUrl = document.getElementById("orgURL")
@@ -180,17 +223,19 @@
         let createdTime = document.getElementById("createdTime")
         let updatedTime = document.getElementById("updatedTime")
         try {
+            // sending the details for getting the details of url
             const res = await fetch(`/api/details/${shortUrl}`, {
                 method: "GET",
                 headers: { "Authorization": "Bearer " + token, }
             })
             const data = await res.json();
             if (data.success) {
-                console.log(data.url)
+                // console.log(data.url)
                 let url = `http://localhost:7001/api/r/${data.url.shortUrl}`
-                console.log(url)
+                // console.log(url)
                 origonalUrl.innerHTML = `${data.url.origonalUrl}`
                 shortURL.innerHTML = `http://localhost:7001/api/${data.url.shortUrl}`
+                // adding the suitable link for redirection
                 shortURL.href = url
                 clickCount.innerHTML = `${data.url.clicks}`
                 expiryTime.innerHTML = `${new Date(data.url.expirationDate).toLocaleString()}`
@@ -200,10 +245,50 @@
                 console.log(Error)
             }
         } catch (error) {
-
+            console.log(error)
+            console.log(data.message)
         }
     }
-    loadDetails();
+    function deleteURL() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            res.status(404).json({ message: "please login first !!" })
+            window.location.href = "/login";
+        }
+        // if you(me) are watching this. bro! never do the type of api call before adding this eventListner it will delete the urls because of same looking route, its risky.baki tu smjh gayaa na...
+        document.getElementById("deleteBtn").addEventListener("click", async function afterWorkings() {
+            if (window.confirm("Bro!, Are you sure")) {
+                const fullUrl = window.location.pathname.split("/");
+                // getting the shortURL
+                const shortUrl = fullUrl[fullUrl.length - 1]
+                try {
+                    // calling the api
+                    const response = await fetch(`/api/delete/${shortUrl}`, {
+                        method: "DELETE",
+                        headers: { "Authorization": "Bearer " + token, }
+                    })
+                    const dataCheck = await response.json();
+                    // if the response done good then this happen,but
+                    if (dataCheck.success) {
+                        alert(dataCheck.message)
+                        window.location.href = "/myURLs"
+                        // if the response not done good then this happen
+                    } else {
+                        console.log("Error occurs while processing your request", data.message)
+                    }
+                } catch (error) {
+                }
+            } else {
+                // small activity after clicking on the red delete button and if the user reject the confirmation.
+                document.getElementById("deleteBtn").innerText = "Okay Brother!!"
+                setTimeout(() => {
+                    document.getElementById("deleteBtn").innerText = "Delete"
+                }, 2000);
+            }
+        })
+    }
+    deleteURL() // calling function
+    loadDetails() // calling function
 </script>
 
 </html>
