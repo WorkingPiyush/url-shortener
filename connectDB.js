@@ -7,5 +7,5 @@ export const connectDB = async (url) => {
         console.log('There is an error caused', err)
         process.exit(1);
     });
-}
+};
 

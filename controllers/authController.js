@@ -8,11 +8,12 @@ dotenv.config()
 
 export const register = async (req, res) => {
     const { username, email, password } = req.body;
-    console.log("User Data", username, email, password)
+    // logging the user who have logged in the app.
+    // console.log("User Data", username, email, password)
     // checking if the mail is already exist or not..
     let userCheck = await User.findOne({ email: req.body.email })
     if (userCheck) {
-        return res.status(400).send('User already exisits. Please sign in')
+        return res.status(400).send('User already exists. Please sign in')
     } else {
         try {
             // hashing the password
@@ -73,7 +74,7 @@ export const logout = async (req, res) => {
         if (!decoded || !decoded.exp) {
             return res.status(400).json({ message: "Invalid token" });
         }
-        // settting an extra layer of expiry time after adding expiry in the jwt
+        // setting an extra layer of expiry time after adding expiry in the jwt
         const jwtExpiry = new Date(decoded.exp * 1000)
         // sending data to the database and saving also
         const blacklisted = await blackList.create({

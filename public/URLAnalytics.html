@@ -209,7 +209,8 @@
     async function loadDetails() {
         const token = localStorage.getItem("token");
         if (!token) {
-            res.status(404).json({ message: "please login first !!" })
+            console.log("please login first !!");
+            alert("please login first !!");
             window.location.href = "/login";
         }
         const fullUrl = window.location.pathname.split("/");
@@ -323,6 +324,7 @@
     deleteURL() // calling function
     loadDetails() // calling function
     extendVal() // calling function
+    
 </script>
 
 </html>

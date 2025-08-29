@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 // url structured schema
 const UrlSchema = mongoose.Schema({
-    origonalUrl: {
+    originalUrl: {
         type: String,
         required: true,
     },

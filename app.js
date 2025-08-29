@@ -66,7 +66,7 @@ app.use("/URLDetails/:shortUrl", express.static(path.join(__dirname, 'public', '
 
 
 
-// listening  the server 
+// listening  the server at PORT
 app.listen(PORT, () => {
     console.log(`Server is running on Port http://localhost:${PORT}`)
 })

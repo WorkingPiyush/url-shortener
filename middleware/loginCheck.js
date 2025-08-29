@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import blackList from "../models/de-activatedSession.js"
 
-// making this middleware for the authenticating the user
+// making this middleware for authenticating the user
 export const loginCheck = async (req, res, next) => {
     // checking the token which was provided during the login 
     try {

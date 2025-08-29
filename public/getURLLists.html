@@ -189,10 +189,11 @@
     &copy; 2025 Linkly. All rights reserved.
   </footer>
   <script>
+
     async function loadUrls() {
       const token = localStorage.getItem("token");
       if (!token) {
-        res.status(404).json({ message: "please login first !!" })
+        res.status(404).json({ message: "Please login first !!" })
         window.location.href = "/login";
       }
       try {
@@ -203,17 +204,17 @@
         const data = await res.json();
         const urlsList = document.getElementById("urlsList")
         urlsList.innerHTML = ""
-        const reponse = document.getElementById("response")
+        const response = document.getElementById("response")
         try {
           if (data.length === 0) {
-            reponse.innerText = "No URLs created yet."
+            response.innerText = "No URLs created yet."
           } else {
             const li = document.createElement("li");
             li.className = "url-card";
             li.innerHTML = data.map((element) =>
               `<div class="card-content">
              <div class="label">Original:</div>
-             <div class="value"><a href="${element.origonalUrl}" target="_blank">${element.origonalUrl}</a></div>
+             <div class="value"><a href="${element.originalUrl}" target="_blank">${element.originalUrl}</a></div>
              <div class="label"><a id="shortDesc" href="/URLDetails/${element.shortUrl}">Short</a>:</div>
              <div class="value"><a href="/api/r/${element.shortUrl}" target="_blank">http://localhost:7001/${element.shortUrl}</a></div>
              <div class="label">Clicks:</div>

@@ -5,7 +5,7 @@ const BlacklistSchema = mongoose.Schema({
         type: String, required: true, unique: true,
     },
     expiry: {
-        type: Date, required: true, index: { expireAfterSeconds: 0 }
+        type: Date, required: true, index: { expireAfterSeconds: 0 },
     },
 },
     { timestamps: true }

@@ -210,7 +210,7 @@
 
 </body>
 <script>
-    // checking is there any token in the local storage
+    // checking if there is any token in local storage
     const token = localStorage.getItem('token');
     if (!token) {
         window.location.href = '/login';
@@ -219,7 +219,7 @@
 
         const urlPlace = document.getElementById('urlPlace');
         const urlData = {
-            origonalUrl: urlPlace.value, //url value
+            originalUrl: urlPlace.value, //url value
         }
 
         // fetching /short api 
@@ -236,7 +236,7 @@
         const data = await res.json();
         if (data.success) {
             let shortUrl = `http://localhost:7001/api/r/${data.url.shortUrl}`
-            console.log(shortUrl); //loging shorturl in the console
+            console.log(shortUrl); //logging shorturl in the console
             // console.log(data.qrCodeImg); // qrcode image url
             const resultBox = document.getElementById("result-box");
             const shortUrlElement = document.getElementById("shortUrl");
@@ -253,6 +253,7 @@
             resultBox.style.display = "block"
         }
     });
+    
 </script>
 
 </html>

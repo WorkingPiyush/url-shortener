@@ -3,25 +3,25 @@ import dotenv from "dotenv";
 import { nanoid } from 'nanoid'
 import QRCode from 'qrcode'
 dotenv.config()
-// shorting URL func..
+// shortening URL func..
 export const shortUrl = async (req, res) => {
     try {
         // accepting the url if the password
-        const { origonalUrl } = req.body;
-        if (!origonalUrl) {
+        const { originalUrl } = req.body;
+        if (!originalUrl) {
             return res.status(400).json({ success: false, message: "Please provide the URL" });
         }
         // getting user ref
         const userID = req.user.id
         const shortUrl = nanoid(8);
         // validating the url
-        const urlValidation = new URL(origonalUrl)
+        const urlValidation = new URL(originalUrl)
         // url Validation
         if (!urlValidation) {
             return res.status(400).json({ message: "Invalid URL" })
         }
         // checking the DB for the existing URL
-        const existingUrl = await Url.findOne({ origonalUrl, User: userID });
+        const existingUrl = await Url.findOne({ originalUrl, User: userID });
         if (existingUrl) {
             return res.status(409).json({ message: "URL already exists", url: existingUrl });
         }
@@ -30,13 +30,13 @@ export const shortUrl = async (req, res) => {
         expirationDate.setDate(expirationDate.getDate() + 7);
         // saving the url in DB
         const newurl = await Url.create({
-            origonalUrl,
+            originalUrl,
             shortUrl,
             expirationDate,
             User: userID
         })
         // giving a a qr code response of short url
-        const qrCodeImg = await QRCode.toDataURL(newurl.origonalUrl)
+        const qrCodeImg = await QRCode.toDataURL(newurl.originalUrl)
         return res.status(201).json({ success: true, url: newurl, qrCodeImg })
     } catch (error) {
         console.log(error)
@@ -61,7 +61,7 @@ export const redirectUrl = async (req, res) => {
         url.clicks++;
         // saving the clicks in the DB
         await url.save();
-        return res.redirect(url.origonalUrl)
+        return res.redirect(url.originalUrl)
 
     } catch (error) {
         console.error("Redirect error:", error);
@@ -71,7 +71,7 @@ export const redirectUrl = async (req, res) => {
 // getting all the created url by the user
 export const getmyUrl = async (req, res) => {
     try {
-        let userId = req.user.id // getting user's refrence
+        let userId = req.user.id // getting user's reference
         const fetchUrls = await Url.find({ User: userId }).sort({ createdAt: -1 }); // finding the all urls which this requested user has created and in a sort order
         if (fetchUrls.length === 0) {
         }
@@ -125,7 +125,7 @@ export const extendValidity = async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({
-            message: 'Server Error we are woking on it!!'
+            message: 'Server Error we are working on it!!'
         })
     }
 }
