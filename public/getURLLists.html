@@ -176,7 +176,7 @@
 
   <main>
     <h2>My Shortened URLs</h2>
-    <p>Here are all the links you have created so far:</p>
+    <p id="response">Here are all the links you have created so far:</p>
 
     <div id="urlsSection" class="urls-section">
       <ul id="urlsList" class="urls-list">
@@ -201,17 +201,17 @@
           headers: { "Authorization": "Bearer " + token, }
         })
         const data = await res.json();
-        // console.log(data)
         const urlsList = document.getElementById("urlsList")
         urlsList.innerHTML = ""
-
-        if (data.length == 0) {
-          urlsList.innerHTML = "<li class='empty-msg'>No URLs created yet.</li>";
-        } else {
-          const li = document.createElement("li");
-          li.className = "url-card";
-          li.innerHTML = data.map(element =>
-            `<div class="card-content">
+        const reponse = document.getElementById("response")
+        try {
+          if (data.length === 0) {
+            reponse.innerText = "No URLs created yet."
+          } else {
+            const li = document.createElement("li");
+            li.className = "url-card";
+            li.innerHTML = data.map((element) =>
+              `<div class="card-content">
              <div class="label">Original:</div>
              <div class="value"><a href="${element.origonalUrl}" target="_blank">${element.origonalUrl}</a></div>
              <div class="label"><a id="shortDesc" href="/URLDetails/${element.shortUrl}">Short</a>:</div>
@@ -221,8 +221,13 @@
              <div class="label">Expiration:</div>
              <div class="value">${new Date(element.expirationDate).toLocaleString()}</div>
             </div><br><hr>`).join("")
-          urlsList.appendChild(li);
+            urlsList.appendChild(li);
+          }
+        } catch (error) {
+          console.log(error)
+          console.log("Error while getting your URLs")
         }
+
       } catch (error) {
         console.error(error);
         alert("Error fetching URLs.");

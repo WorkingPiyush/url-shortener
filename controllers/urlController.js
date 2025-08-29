@@ -73,11 +73,9 @@ export const getmyUrl = async (req, res) => {
     try {
         let userId = req.user.id // getting user's refrence
         const fetchUrls = await Url.find({ User: userId }).sort({ createdAt: -1 }); // finding the all urls which this requested user has created and in a sort order
-        if (fetchUrls.length == 0) {
-            // if the length of url is 0 means if the has not created any thing this work
-            return res.status(202).json({ message: "No Genrated URLs Found !" });
+        if (fetchUrls.length === 0) {
         }
-        // then it will respond
+        // responding all the urls 
         res.status(200).json(fetchUrls);
     } catch (error) {
         // if there is any error comes this blk will help us to check the code
@@ -108,5 +106,26 @@ export const deleteUrl = async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: 'Server Error' });
+    }
+}
+export const extendValidity = async (req, res) => {
+    const { shortUrl } = req.params;
+    if (!shortUrl) {
+        return res.status(404).json({ success: false, message: 'Please use valid URL' })
+    }
+    try {
+        let newexpirationDate = new Date()
+        newexpirationDate.setDate(newexpirationDate.getDate() + 7)
+        console.log(newexpirationDate)
+        const update = {
+            expirationDate: newexpirationDate,
+        }
+        await Url.findOneAndUpdate({ shortUrl }, update, { new: true })
+        res.status(200).json({ success: true, message: 'Expiration Date Extended for 7 Days' })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message: 'Server Error we are woking on it!!'
+        })
     }
 }

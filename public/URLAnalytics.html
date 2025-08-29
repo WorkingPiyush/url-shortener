@@ -194,8 +194,8 @@
                 </tr>
             </table>
             <div class="execution-btn">
-                <button class="extendBtn"><a>Extend</a></button>
-                <button class="deleteBtn" id="deleteBtn"><a>Delete</a></button>
+                <button class="extendBtn" id="extendBtn">Extend For 7 Days</button>
+                <button class="deleteBtn" id="deleteBtn">Delete</button>
             </div>
         </div>
     </main>
@@ -287,8 +287,42 @@
             }
         })
     }
+    async function extendVal() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            res.status(404).json({ message: "please login first !!" })
+            window.location.href = "/login";
+        }
+        document.getElementById("extendBtn").addEventListener("click", async () => {
+            const fullUrl = window.location.pathname.split("/");
+            // getting the shortURL
+            const shortUrl = fullUrl[fullUrl.length - 1]
+            // console.log(shortUrl)
+            try {
+                // calling the api
+                const response = await fetch(`/api/update/${shortUrl}`, {
+                    method: "PUT",
+                    headers: { "Authorization": "Bearer " + token, }
+                })
+                const dataCheck = await response.json();
+                // if the response done good then this happen,but
+                if (dataCheck.success) {
+                    alert(dataCheck.message)
+                    console.log(dataCheck.newexpirationDate)
+                    document.getElementById("extendBtn")
+                    // if the response not done good then this happen
+                } else {
+                    console.log("Error occurs while processing your request", data.message)
+                }
+            } catch (error) {
+                console.log(error)
+                console.log(error.message)
+            }
+        })
+    }
     deleteURL() // calling function
     loadDetails() // calling function
+    extendVal() // calling function
 </script>
 
 </html>
