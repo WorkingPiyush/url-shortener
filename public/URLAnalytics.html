@@ -151,13 +151,18 @@
             font-size: 14px;
             color: #555;
         }
+
+        #headIcon {
+            text-decoration: none;
+            color: white;
+        }
     </style>
 </head>
 
 <body>
 
     <header>
-        <h1>short-LS</h1>
+       <h1><a href="/home" id="headIcon">short-LS</a></h1>
         <div class="auth-buttons">
             <a href="/home">Home</a>
             <a id="logoutBtn" href="/logout">Log Out</a>
@@ -201,7 +206,7 @@
     </main>
 
     <footer>
-        &copy; 2025 Linkly. All rights reserved.
+        &copy; 2025 short-LS. All rights reserved.
     </footer>
 
 </body>
@@ -217,7 +222,7 @@
         // getting the shortUrl
         const shortUrl = fullUrl[fullUrl.length - 1]
         // console.log(shortUrl)
-        let origonalUrl = document.getElementById("orgURL")
+        let originalUrl = document.getElementById("orgURL")
         let shortURL = document.getElementById("shortURL")
         let clickCount = document.getElementById("clickCount")
         let expiryTime = document.getElementById("expTime")
@@ -234,7 +239,7 @@
                 // console.log(data.url)
                 let url = `http://localhost:7001/api/r/${data.url.shortUrl}`
                 // console.log(url)
-                origonalUrl.innerHTML = `${data.url.origonalUrl}`
+                originalUrl.innerHTML = `${data.url.originalUrl}`
                 shortURL.innerHTML = `http://localhost:7001/api/${data.url.shortUrl}`
                 // adding the suitable link for redirection
                 shortURL.href = url
@@ -324,7 +329,7 @@
     deleteURL() // calling function
     loadDetails() // calling function
     extendVal() // calling function
-    
+
 </script>
 
 </html>
